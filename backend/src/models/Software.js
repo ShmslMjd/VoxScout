@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 // 1st step: create a schema
 // 2nd step: create a model based on that schema
 
-const audioSchema = new mongoose.Schema(
+const softwareSchema = new mongoose.Schema(
     {
     softwareName:{
         type:String,
@@ -17,6 +17,6 @@ const audioSchema = new mongoose.Schema(
     {timestamps: true}
 );
 
-const Audio = mongoose.model("Audio", audioSchema)
+const Software = mongoose.model("Software", softwareSchema);
 
-export default Audio;
+export default Software;
