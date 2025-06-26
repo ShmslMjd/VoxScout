@@ -11,6 +11,6 @@ export default {
   },
   plugins: [daisyui],
   daisyui:{
-    themes:["pastel", "corporate", "nord", "cmyk", "forest"],
+    themes:["forest"],
   }
 }
