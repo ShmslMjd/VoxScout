@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import RateLimitedUI from '../components/RateLimitedUI';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import SoftwareCard from '../components/SoftwareCard';
+import api from '../lib/axios';
 
 const HomePage = () => {
   const [israteLimited, setRateLimited] = useState(false);
@@ -15,7 +15,7 @@ const HomePage = () => {
         try {
             //axios is used to make HTTP requests
             //Here we are making a GET request to the backend API to fetch software data
-            const res = await axios.get("http://localhost:5001/api/audio");
+            const res = await api.get("/audio");
             console.log(res.data);
             setSoftwares(res.data);
             setRateLimited(false);

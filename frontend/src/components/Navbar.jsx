@@ -11,7 +11,7 @@ const Navbar = () => {
                     Logo Name
                 </h1>
                 <div className='flex items-center gap-4'>
-                    <Link to={'/compare'} className='btn btn-primary'>
+                    <Link to={'/create'} className='btn btn-primary'>
                     <PlusIcon className='size-5'/>
                     <span>New Software</span>
                     </Link>
