@@ -1,14 +1,17 @@
-import {Link} from 'react-router'
-import {PlusIcon} from 'lucide-react'
+import { useState } from "react";
+import { Link } from "react-router";
 
 const Navbar = () => {
+
+  const [showSearch, setShowSearch] = useState(false);
+
   return (
     <header className='bg-base-100 border-b border-base-content/10'>
         <div className="navbar mx-auto max-w-6xl p-4">
             <div className="navbar-start">
                 <div className="dropdown">
                 <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-                    <svg
+                    <svg    
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
                     fill="none"
@@ -24,47 +27,88 @@ const Navbar = () => {
                 <ul
                     tabIndex={0}
                     className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                    <li><a>Homepage</a></li>
-                    <li><a>Portfolio</a></li>
-                    <li><a>About</a></li>
+                    <li><a>Compare</a></li>
+                    <li><a>Categories</a></li>
+                    <li><a>Blog</a></li>
+                    <li><a>About Us</a></li>
+                    <li><a>Contact</a></li>
                 </ul>
                 </div>
             </div>
             <div className="navbar-center">
-                <a className="btn btn-ghost text-xl">daisyUI</a>
+                <Link to="/">
+                    <img alt="VoxScout logo" src="src/img/favicons/vox-scout-nobg-32.png" />
+                </Link>
             </div>
             <div className="navbar-end">
-                <button className="btn btn-ghost btn-circle">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                </button>
-                <button className="btn btn-ghost btn-circle">
-                <div className="indicator">
-                    <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                    <span className="badge badge-xs badge-primary indicator-item"></span>
+                {!showSearch && (
+                    <button className="btn btn-ghost btn-circle" onClick={() => setShowSearch(true)} aria-label="Search">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                )}
+                {showSearch && (
+                    <div className="relative ml-2">
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        className="input input-bordered w-32 md:w-auto pr-8"
+                        autoFocus
+                    />
+                    <button
+                        type="button"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-base-content/60 hover:text-error"
+                        onClick={() => setShowSearch(false)}
+                        aria-label="Close search"
+                        tabIndex={0}
+                    >
+                        <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                        </svg>
+                    </button>
+                    </div>
+                )}
+                <div className="dropdown dropdown-end">
+                    <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                        <div className="w-10 rounded-full">
+                        <img
+                            alt="Tailwind CSS Navbar component"
+                            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                        </div>
+                    </div>
+                    <ul
+                        tabIndex={0}
+                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                        <li>
+                        <a className="justify-between">
+                            Profile
+                        </a>
+                        </li>
+                        <li><a>Settings</a></li>
+                        <li><a>Logout</a></li>
+                    </ul>
                 </div>
-                </button>
             </div>
         </div>
     </header>
