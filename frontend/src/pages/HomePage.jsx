@@ -6,7 +6,7 @@ import SoftwareCard from '../components/SoftwareCard';
 import api from '../lib/axios';
 
 const HomePage = () => {
-  const [israteLimited, setRateLimited] = useState(false);
+  /*const [israteLimited, setRateLimited] = useState(false);
   const [softwares, setSoftwares] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -55,7 +55,15 @@ const HomePage = () => {
         </div>
 
     </div>
-  )
+  )*/
+
+
+    return(
+        <div className='min-h-screen'>
+            <Navbar/>
+        </div>
+    )
+
 }
 
 export default HomePage
