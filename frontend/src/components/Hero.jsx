@@ -1,8 +1,37 @@
-import React from 'react'
+import heroImg from '../img/heroImg.jpg';
 
 const Hero = () => {
   return (
-    <section className="relative py-12 overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24">
+
+    <div className="hero bg-base-200 min-h-96">  
+        <div className="hero-content flex-col lg:flex-row-reverse">
+            <img
+            src= {heroImg}
+            className="max-w-sm rounded-lg shadow-2xl" />
+            <div>
+                <h1 className="text-5xl font-bold">Find the Right AI Audio tools for you!</h1>
+                <p className="py-6">
+                    Explore and compare diverse tools to suits your need search now.
+                </p>
+                <label className="input input-bordered rounded-full input-lg flex items-center gap-2">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 16 16"
+                        fill="currentColor"
+                        className="h-4 w-4 opacity-70">
+                        <path
+                        fillRule="evenodd"
+                        d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                        clipRule="evenodd" />
+                    </svg>
+                    <input type="text" className="grow" placeholder="Search" />
+                    <button className='btn btn-outline btn-primary rounded-full'>Find AI Tool</button>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    /*<section className="relative py-12 overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24">
         <div className="px-4 mx-auto relativea sm:px-6 lg:px-8 max-w-7xl">
             <div className="grid items-center grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16">
                 <div>
@@ -38,21 +67,7 @@ const Hero = () => {
 
             </div>
         </div>
-        <div className="hero bg-base-200 relative py-12 overflow-hidden sm:pb-16 lg:pb-20 xl:pb-24">  
-            <div className="hero-content flex-col lg:flex-row-reverse">
-                <img
-                src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp"
-                className="max-w-sm rounded-lg shadow-2xl" />
-                <div>
-                <h1 className="text-5xl font-bold">Find the Right AI Audio tools for you!</h1>
-                <p className="py-6">
-                    Explore and compare diverse tools to suits your need search now.
-                </p>
-                <button className="btn btn-primary">Get Started</button>
-                </div>
-            </div>
-        </div>
-    </section>
+    </section>*/
     
   )
 }
