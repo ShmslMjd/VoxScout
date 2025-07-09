@@ -4,6 +4,7 @@ import RateLimitedUI from '../components/RateLimitedUI';
 import toast from 'react-hot-toast';
 import SoftwareCard from '../components/SoftwareCard';
 import api from '../lib/axios';
+import Hero from '../components/Hero';
 
 const HomePage = () => {
   /*const [israteLimited, setRateLimited] = useState(false);
@@ -61,6 +62,7 @@ const HomePage = () => {
     return(
         <div className='min-h-screen'>
             <Navbar/>
+            <Hero/>
         </div>
     )
 
