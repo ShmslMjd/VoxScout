@@ -1,9 +1,9 @@
-import heroImg from '../img/heroImg.jpg';
+import heroImg from '../img/homePage/heroImg.jpg';
 
 const Hero = () => {
   return (
 
-    <div className="hero bg-base-200 min-h-96">  
+    <div className="hero bg-base-200 min-h-96">
         <div className="hero-content flex-col lg:flex-row-reverse">
             <img
             src= {heroImg}

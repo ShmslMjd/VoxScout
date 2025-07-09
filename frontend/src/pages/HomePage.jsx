@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 import SoftwareCard from '../components/SoftwareCard';
 import api from '../lib/axios';
 import Hero from '../components/Hero';
+import HowTo from '../components/HowTo';
+import PopularTools from '../components/PopularTools';
 
 const HomePage = () => {
   /*const [israteLimited, setRateLimited] = useState(false);
@@ -63,6 +65,8 @@ const HomePage = () => {
         <div className='min-h-screen'>
             <Navbar/>
             <Hero/>
+            <HowTo/>
+            <PopularTools/>
         </div>
     )
 
