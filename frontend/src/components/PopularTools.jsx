@@ -99,7 +99,7 @@ const PopularTools = () => {
                     <Slider {...settings}>
                         {tools.map((tool, idx) => (
                             <div key={idx} className="px-2">
-								<div className="card bg-base-100 max-w-72 shadow-xl">
+								<div className="card bg-base-100 max-w-72 shadow-lg rounded-xl overflow-hidden relative">
 									<div className="card-body">
 										<div className="flex justify-between items-center">
 											<h2 className="card-title">{tool.name}</h2>
@@ -123,7 +123,7 @@ const PopularTools = () => {
 									<figure>
 										<img
 										src= {tool.logo}
-										alt="Shoes" />
+										alt="software" />
 									</figure>
 								</div>
                                 {/*<div className="bg-white rounded-xl shadow p-5 flex flex-col items-center relative min-h-[260px]">

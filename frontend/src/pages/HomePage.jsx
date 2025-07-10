@@ -7,6 +7,8 @@ import api from '../lib/axios';
 import Hero from '../components/Hero';
 import HowTo from '../components/HowTo';
 import PopularTools from '../components/PopularTools';
+import PopularCategories from '../components/PopularCategories';
+import Footer from '../components/Footer';
 
 const HomePage = () => {
   /*const [israteLimited, setRateLimited] = useState(false);
@@ -67,6 +69,8 @@ const HomePage = () => {
             <Hero/>
             <HowTo/>
             <PopularTools/>
+            <PopularCategories/>
+            <Footer/>
         </div>
     )
 
