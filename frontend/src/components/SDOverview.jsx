@@ -1,4 +1,4 @@
-import { Download, DollarSign, Star, Globe } from "lucide-react";
+import { Facebook, Globe, Instagram, X, Youtube } from "lucide-react";
 import elevenlabsLogo from "../img/homePage/elevenlabs.png";
 
 const SDOverview = () => {
@@ -23,14 +23,16 @@ const SDOverview = () => {
     website: "https://twitter.com",
     socials: [
       { icon: <Globe size={18} />, url: "https://twitter.com" },
-      { icon: <svg width="18" height="18" fill="currentColor" className="inline" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.59-2.47.7a4.3 4.3 0 0 0 1.88-2.37 8.59 8.59 0 0 1-2.72 1.04A4.28 4.28 0 0 0 16.11 4c-2.37 0-4.29 1.92-4.29 4.29 0 .34.04.67.11.99C7.69 9.13 4.07 7.38 1.64 4.7c-.37.64-.58 1.39-.58 2.19 0 1.51.77 2.85 1.94 3.63a4.28 4.28 0 0 1-1.94-.54v.05c0 2.11 1.5 3.87 3.5 4.27-.36.1-.74.16-1.13.16-.28 0-.54-.03-.8-.08.54 1.7 2.11 2.94 3.97 2.97A8.6 8.6 0 0 1 2 19.54c-.29 0-.57-.02-.85-.05A12.13 12.13 0 0 0 8.29 21.5c7.55 0 11.68-6.26 11.68-11.68 0-.18-.01-.36-.02-.54A8.18 8.18 0 0 0 24 4.59a8.36 8.36 0 0 1-2.54.7z"/></svg>, url: "https://twitter.com" },
+      { icon: <X size={18} />, url: "https://x.com" },
+      { icon: <Facebook size={18}/>, url: "https://facebook.com" },
+      { icon: <Instagram size={18} />, url: "https://instagram.com" },
+      { icon: <Youtube size={18} />, url: "https://youtube.com" },
       // Add more socials as needed
     ],
-  };
+  };  
 
   return (
-    <section className="max-w-7xl mx-auto mt-8 px-2 md:px-4">
-      <div className="bg-white rounded-lg shadow p-8">
+      <div className="bg-white max-w-7xl mx-auto rounded-lg shadow p-8 mt-8 px-2 md:px-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main Content */}
           <div className="flex-1 min-w-0">
@@ -56,54 +58,75 @@ const SDOverview = () => {
             </ul>
           </div>
           {/* Right Side: Two Cards Stacked */}
-          <div className="flex flex-col gap-6 w-full lg:w-[340px] flex-shrink-0">
+          <div className="flex flex-col gap-6 w-full lg:w-[420px] flex-shrink-0">
             {/* Software Detail Card */}
-            <div className="border rounded-lg p-6 bg-gray-50">
-              <h3 className="font-semibold text-gray-800 mb-4">Software Detail</h3>
-              <div className="grid grid-cols-3 gap-4 text-center mb-4">
+            <div className="border border-blue-200 rounded-lg p-6 bg-white">
+              <h3 className="font-semibold text-gray-800 mb-6">Software Detail</h3>
+              <div className="grid grid-cols-3 gap-4 text-left mb-6">
                 <div>
-                  <div className="flex justify-center mb-1">
-                    <Star className="text-blue-500" size={20} />
+                  <div className="flex justify-start mb-2">
+                    <svg className="text-blue-500" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <rect x="3" y="4" width="18" height="18" rx="2" />
+                      <path d="M16 2v4M8 2v4M3 10h18" />
+                    </svg>
                   </div>
-                  <div className="font-semibold">{overview.review}</div>
-                  <div className="text-xs text-gray-500 mt-1">Review</div>
+                  <div className="uppercase text-xs text-gray-500 font-normal mb-1">Review</div>
+                  <div className="font-medium text-gray-900">{overview.review}</div>
                 </div>
                 <div>
-                  <div className="flex justify-center mb-1">
-                    <Download className="text-blue-500" size={20} />
+                  <div className="flex justify-start mb-2">
+                    <svg className="text-blue-500" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M12 6v6l4 2" />
+                    </svg>
                   </div>
-                  <div className="font-semibold">{overview.downloads}</div>
-                  <div className="text-xs text-gray-500 mt-1">No of Download</div>
+                  <div className="uppercase text-xs text-gray-500 font-normal mb-1">No of Download</div>
+                  <div className="font-medium text-gray-900">{overview.downloads}</div>
                 </div>
                 <div>
-                  <div className="flex justify-center mb-1">
-                    <DollarSign className="text-blue-500" size={20} />
+                  <div className="flex justify-start mb-2">
+                    <svg className="text-blue-500" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <rect x="3" y="7" width="18" height="13" rx="2" />
+                      <path d="M16 3v4M8 3v4" />
+                    </svg>
                   </div>
-                  <div className="font-semibold">{overview.price}</div>
-                  <div className="text-xs text-gray-500 mt-1">Starting Price</div>
+                  <div className="uppercase text-xs text-gray-500 font-normal mb-1">Starting Price</div>
+                  <div className="font-medium text-gray-900">{overview.price}</div>
                 </div>
               </div>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <div className="font-semibold text-sm mb-1">Pros</div>
-                  <ul className="list-disc list-inside text-xs text-gray-700 space-y-1">
+              <div className="grid grid-cols-3 gap-4 text-lef">
+                <div>
+                  <div className="flex justify-start mb-2">
+                    <svg className="text-blue-500" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <rect x="4" y="4" width="16" height="16" rx="2" />
+                      <path d="M8 2v4M16 2v4" />
+                    </svg>
+                  </div>
+                  <div className="uppercase text-xs text-gray-500 font-normal mb-1">Pros</div>
+                  <ul className="list-disc list-inside font-medium text-gray-900 text-left mx-auto inline-block">
                     {overview.pros.map((pro, i) => (
                       <li key={i}>{pro}</li>
                     ))}
                   </ul>
                 </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-sm mb-1">Cons:</div>
-                  <ul className="list-disc list-inside text-xs text-gray-700 space-y-1">
+                <div>
+                  <div className="flex justify-start mb-2">
+                    <svg className="text-blue-500" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <circle cx="12" cy="10" r="3" />
+                      <path d="M12 13v7" />
+                    </svg>
+                  </div>
+                  <div className="uppercase text-xs text-gray-500 font-normal mb-1">Cons</div>
+                  <ul className="list-disc list-inside font-medium text-gray-900 text-left mx-auto inline-block">
                     {overview.cons.map((con, i) => (
-                      <li key={i} className="font-semibold text-red-500">{con}</li>
+                      <li key={i}>{con}</li>
                     ))}
                   </ul>
                 </div>
               </div>
             </div>
             {/* Company Detail Card */}
-            <div className="border rounded-lg p-6 bg-gray-50">
+            <div className="border border-blue-200 rounded-lg p-6 bg-white">
               <div className="flex items-center gap-3 mb-4">
                 <img src={company.logo} alt={company.name} className="h-12 w-12 object-contain rounded" />
                 <div>
@@ -151,7 +174,6 @@ const SDOverview = () => {
           </div>
         </div>
       </div>
-    </section>
   );
 };
 

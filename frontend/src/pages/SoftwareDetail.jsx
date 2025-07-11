@@ -1,4 +1,6 @@
 import Navbar from "../components/Navbar"
+import SDCarousel from "../components/SDCarousel"
+import SDFeatures from "../components/SDFeatures"
 import SDHero from "../components/SDHero"
 import SDOverview from "../components/SDOverview"
 
@@ -8,6 +10,8 @@ const SoftwareDetail = () => {
       <Navbar/>
       <SDHero/>
       <SDOverview/>
+      <SDCarousel/>
+      <SDFeatures/>
     </div>
   )
 }
