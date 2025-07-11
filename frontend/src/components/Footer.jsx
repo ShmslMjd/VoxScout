@@ -13,16 +13,16 @@ const Footer = () => {
                     <h3 className="tracking-wide uppercase text-gray-950">Product</h3>
                     <ul className="space-y-5">
                         <li>
-                            <a rel="noopener noreferrer" href="#">Features</a>
+                            <a rel="noopener noreferrer" href="#" className="hover:text-[#E6B057] transition-colors">Features</a>
                         </li>
                         <li>
-                            <a rel="noopener noreferrer" href="#">Integrations</a>
+                            <a rel="noopener noreferrer" href="#" className="hover:text-[#E6B057] transition-colors">Integrations</a>
                         </li>
                         <li>
-                            <a rel="noopener noreferrer" href="#">Pricing</a>
+                            <a rel="noopener noreferrer" href="#" className="hover:text-[#E6B057] transition-colors">Pricing</a>
                         </li>
                         <li>
-                            <a rel="noopener noreferrer" href="#">FAQ</a>
+                            <a rel="noopener noreferrer" href="#" className="hover:text-[#E6B057] transition-colors">FAQ</a>
                         </li>
                     </ul>
                 </div>
@@ -30,10 +30,10 @@ const Footer = () => {
                     <h3 className="tracking-wide uppercase text-gray-950">Company</h3>
                     <ul className="space-y-5">
                         <li>
-                            <a rel="noopener noreferrer" href="#">Privacy</a>
+                            <a rel="noopener noreferrer" href="#" className="hover:text-[#E6B057] transition-colors">Privacy</a>
                         </li>
                         <li>
-                            <a rel="noopener noreferrer" href="#">Terms of Service</a>
+                            <a rel="noopener noreferrer" href="#" className="hover:text-[#E6B057] transition-colors">Terms of Service</a>
                         </li>
                     </ul>
                 </div>
@@ -41,13 +41,13 @@ const Footer = () => {
                     <h3 className="uppercase text-gray-950">Developers</h3>
                     <ul className="space-y-5">
                         <li>
-                            <a rel="noopener noreferrer" href="#">Public API</a>
+                            <a rel="noopener noreferrer" href="#" className="hover:text-[#E6B057] transition-colors">Public API</a>
                         </li>
                         <li>
-                            <a rel="noopener noreferrer" href="#">Documentation</a>
+                            <a rel="noopener noreferrer" href="#" className="hover:text-[#E6B057] transition-colors">Documentation</a>
                         </li>
                         <li>
-                            <a rel="noopener noreferrer" href="#">Guides</a>
+                            <a rel="noopener noreferrer" href="#" className="hover:text-[#E6B057] transition-colors">Guides</a>
                         </li>
                     </ul>
                 </div>
@@ -73,7 +73,7 @@ const Footer = () => {
                 </div>
             </div>
         </div>
-        <div className="py-6 text-sm text-center text-gray-950">© 1968 Company Co. All rights reserved.</div>
+        <div className="py-6 text-sm text-center text-gray-950">© 2025 VoxScouts All rights reserved.</div>
     </footer>
   );
 };
