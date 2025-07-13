@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PlusCircle, XCircle, Search, Star, X } from 'lucide-react';
 
 // Modal Component
@@ -79,6 +79,39 @@ const SoftwareSelectModal = ({ isOpen, onClose, onSelect, selected, softwareList
 // Main Component
 const CPSoftwareSelection = ({ selected, setSelected, softwareList }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('summary');
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveTab(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: '-50% 0px',
+        threshold: 0
+      }
+    );
+
+    const sections = ['summary', 'features', 'price', 'ratings'];
+    sections.forEach((section) => {
+      const element = document.getElementById(section);
+      if (element) observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const getTabClasses = (tabId) => {
+    return `border-b-2 py-4 px-1 text-sm font-medium ${
+      activeTab === tabId
+        ? 'border-blue-600 text-blue-600'
+        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+    }`;
+  };
 
   const handleRemove = (index) => {
     const newSelected = [...selected];
@@ -87,7 +120,7 @@ const CPSoftwareSelection = ({ selected, setSelected, softwareList }) => {
   };
 
   return (
-    <div className="w-full bg-gray-50 min-h-screen pb-8">
+    <div className="w-full bg-gray-50">
       {/* Container with padding */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         {/* Title */}
@@ -100,10 +133,17 @@ const CPSoftwareSelection = ({ selected, setSelected, softwareList }) => {
           {/* Tabs */}
           <div className="px-6">
             <nav className="flex gap-8">
-              <a href="#summary" className="border-b-2 border-blue-600 py-4 px-1 text-sm font-medium text-blue-600">Summary</a>
-              <a href="#features" className="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">Features</a>
-              <a href="#price" className="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">Price</a>
-              <a href="#ratings" className="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">Ratings</a>
+              {['summary', 'features', 'price', 'ratings'].map((tabId) => (
+                <button
+                  key={tabId}
+                  onClick={() => {
+                    document.getElementById(tabId).scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className={getTabClasses(tabId)}
+                >
+                  {tabId.charAt(0).toUpperCase() + tabId.slice(1)}
+                </button>
+              ))}
             </nav>
           </div>
 
@@ -111,10 +151,17 @@ const CPSoftwareSelection = ({ selected, setSelected, softwareList }) => {
           <div className="h-px bg-gray-200"></div>
 
           {/* Software Selection Grid */}
-          <div className="grid grid-cols-3 divide-x">
-            {/* Left Cell - Add Software or Third Selection */}
-            <div className="p-8 flex items-center justify-center min-h-[250px]">
-              {selected.length < 3 ? (
+          <div 
+            className={`grid divide-x divide-gray-200`}
+            style={{ 
+              gridTemplateColumns: selected.length === 3 
+                ? '200px 1fr 1fr 1fr' 
+                : '200px 1fr 1fr'
+            }}
+          >
+            {/* Left Cell - Either Add Software or Empty */}
+            <div className="p-8 flex items-center justify-center h-[250px]">
+              {selected.length < 3 && (
                 <button
                   onClick={() => setModalOpen(true)}
                   className="flex flex-col items-center text-blue-600 hover:text-blue-700"
@@ -122,32 +169,17 @@ const CPSoftwareSelection = ({ selected, setSelected, softwareList }) => {
                   <span className="text-sm mb-2">Add Software</span>
                   <PlusCircle className="w-6 h-6" />
                 </button>
-              ) : (
-                <div className="relative w-full h-full flex flex-col items-center justify-center">
-                  <button
-                    onClick={() => handleRemove(2)}
-                    className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
-                  >
-                    <XCircle className="w-5 h-5" />
-                  </button>
-                  <img
-                    src={selected[2].logo}
-                    alt={selected[2].name}
-                    className="w-32 h-32 object-contain mb-4"
-                  />
-                  <span className="text-sm font-medium">{selected[2].name}</span>
-                </div>
               )}
             </div>
 
-            {/* Middle Cell - First Selection */}
-            <div className="p-8 flex items-center justify-center min-h-[250px]">
+            {/* First Software */}
+            <div className="p-8 flex items-center justify-center h-[250px]">
               {selected[0] && (
-                <div className="relative w-full h-full flex flex-col items-center justify-center">
+                <div className="relative flex flex-col items-center justify-center">
                   {selected.length === 3 && (
                     <button
                       onClick={() => handleRemove(0)}
-                      className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                      className="absolute -top-2 -right-2 text-gray-400 hover:text-gray-600"
                     >
                       <XCircle className="w-5 h-5" />
                     </button>
@@ -162,14 +194,14 @@ const CPSoftwareSelection = ({ selected, setSelected, softwareList }) => {
               )}
             </div>
 
-            {/* Right Cell - Second Selection */}
-            <div className="p-8 flex items-center justify-center min-h-[250px]">
+            {/* Second Software */}
+            <div className="p-8 flex items-center justify-center h-[250px]">
               {selected[1] && (
-                <div className="relative w-full h-full flex flex-col items-center justify-center">
+                <div className="relative flex flex-col items-center justify-center">
                   {selected.length === 3 && (
                     <button
                       onClick={() => handleRemove(1)}
-                      className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                      className="absolute -top-2 -right-2 text-gray-400 hover:text-gray-600"
                     >
                       <XCircle className="w-5 h-5" />
                     </button>
@@ -183,6 +215,26 @@ const CPSoftwareSelection = ({ selected, setSelected, softwareList }) => {
                 </div>
               )}
             </div>
+
+            {/* Third Software - Only shows when there are 3 selected */}
+            {selected.length === 3 && (
+              <div className="p-8 flex items-center justify-center h-[250px]">
+                <div className="relative flex flex-col items-center justify-center">
+                  <button
+                    onClick={() => handleRemove(2)}
+                    className="absolute -top-2 -right-2 text-gray-400 hover:text-gray-600"
+                  >
+                    <XCircle className="w-5 h-5" />
+                  </button>
+                  <img
+                    src={selected[2].logo}
+                    alt={selected[2].name}
+                    className="w-32 h-32 object-contain mb-4"
+                  />
+                  <span className="text-sm font-medium">{selected[2].name}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
