@@ -1,4 +1,3 @@
-import React from 'react';
 import { Star } from 'lucide-react';
 
 const CPSummary = ({ selected }) => {
@@ -40,7 +39,7 @@ const CPSummary = ({ selected }) => {
                         ))}
                       </div>
                       <span className="text-blue-600 text-sm ml-1">
-                        ({software.reviews})
+                        ({software.totalReviews})
                       </span>
                       <span className="text-sm ml-1">
                         {software.rating} out of 5
