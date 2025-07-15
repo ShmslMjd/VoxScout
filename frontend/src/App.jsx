@@ -4,6 +4,7 @@ import SearchResult from './pages/SearchResult'
 import SoftwareDetail from './pages/SoftwareDetail'
 import ComparePage from './pages/ComparePage'
 import CreatePage from './pages/CreatePage'
+import UserACcount from './pages/UserACcount'
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         {/*<Route path="/software/:id" element={<SoftwareDetail/>}/>*/}
         <Route path="/software/" element={<SoftwareDetail/>}/>
         <Route path="/compare" element={<ComparePage/>}/>
+        <Route path="/profile" element={<UserACcount/>}/>
       </Routes>
     </div>
   )
