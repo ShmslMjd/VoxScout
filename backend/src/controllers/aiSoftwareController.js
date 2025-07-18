@@ -177,6 +177,32 @@ export const addSoftwareReview = async (req, res) => {
   }
 };
 
+// Search software
+export const searchSoftware = async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q) {
+      return res.status(400).json({ message: "Search query is required" });
+    }
+
+    // Search only in name field
+    const software = await Software.find({
+      name: { $regex: q, $options: 'i' }
+    })
+    .select('name logo category company.name rating _id')
+    .limit(5);
+
+    res.status(200).json(software);
+  } catch (error) {
+    console.error("Error searching software:", error);
+    res.status(500).json({ 
+      message: "Error searching software", 
+      error: error.message 
+    });
+  }
+};
+
 /*
 export async function getAISoftware(req,res) {
      try {

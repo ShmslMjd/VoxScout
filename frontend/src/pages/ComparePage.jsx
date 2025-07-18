@@ -59,7 +59,6 @@ const ComparePage = () => {
         setSelected={setSelected}
         softwareList={softwareList}
       />
-      {/*}
       {selected.length > 0 && (
         <>
           <div id="summary">
@@ -75,7 +74,7 @@ const ComparePage = () => {
             <CPReviews selected={selected} />
           </div>
         </>
-      )}*/}
+      )}
       <Footer />
     </div>
   );

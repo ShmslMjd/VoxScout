@@ -24,7 +24,7 @@ const CPPricing = ({ selected }) => {
                 <div className="py-4 pl-4 pr-8 font-medium">Free Trial</div>
                 {selected.map((software, index) => (
                   <div key={index} className="py-4 px-6 flex justify-center items-center gap-2">
-                    {software.pricing.hasFreeTrialPeriod ? (
+                    {software.pricing?.hasFreeTrialPeriod ? (
                       <>
                         <Check className="w-5 h-5 text-green-500" />
                         <span className="text-sm text-gray-600">
@@ -38,7 +38,7 @@ const CPPricing = ({ selected }) => {
                 ))}
               </div>
 
-              {/* Entry Level Pricing Row */}
+              {/* Starting Price Row */}
               <div
                 className="grid divide-x divide-gray-200"
                 style={{
@@ -48,18 +48,43 @@ const CPPricing = ({ selected }) => {
               >
                 <div className="py-4 pl-4 pr-8 font-medium">Starting Price</div>
                 {selected.map((software, index) => (
-                  <div key={index} className="py-4 px-6 flex justify-center items-center">
-                    <span className="text-sm">
-                      {software.pricing.hasFreeVersion ? 
-                        'Free' : 
-                        software.pricing.tiers[0].price + '/' + software.pricing.tiers[0].billingPeriod
-                      }
-                    </span>
+                  <div key={index} className="py-4 px-6 flex flex-col items-center gap-1">
+                    {software.pricing?.plans?.length > 0 && (
+                      <span className="text-sm">
+                        ${software.pricing.plans[0].price.amount}/
+                        {software.pricing.plans[0].price.period}
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
 
-              {/* Browse All Plans Row */}
+              {/* Plans Row */}
+              <div
+                className="grid divide-x divide-gray-200"
+                style={{
+                  gridTemplateColumns:
+                    selected.length === 3 ? '180px 1fr 1fr 1fr' : '180px 1fr 1fr',
+                }}
+              >
+                <div className="py-4 pl-4 pr-8 font-medium">Available Plans</div>
+                {selected.map((software, index) => (
+                  <div key={index} className="py-4 px-6">
+                    <div className="flex flex-col gap-2">
+                      {software.pricing?.plans?.map((plan, planIndex) => (
+                        <div key={planIndex} className="text-sm">
+                          <div className="font-medium">{plan.name}</div>
+                          <div className="text-gray-600">
+                            ${plan.price.amount}/{plan.price.period}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* View Details Row */}
               <div
                 className="grid divide-x divide-gray-200"
                 style={{
@@ -71,14 +96,12 @@ const CPPricing = ({ selected }) => {
                 {selected.map((software, index) => (
                   <div key={index} className="py-4 px-6 flex justify-center">
                     <a 
-                      href="#" 
+                      href={`${software.websiteUrl}/pricing`} 
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-sm text-blue-600 hover:text-blue-700"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        // Add pricing plan navigation logic here
-                      }}
                     >
-                      Browse all pricing plan
+                      View full pricing details
                     </a>
                   </div>
                 ))}

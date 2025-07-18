@@ -31,7 +31,7 @@ const CPSummary = ({ selected }) => {
                             key={i}
                             size={16}
                             className={
-                              i < Math.floor(software.rating)
+                              i < Math.floor(software.rating?.score || 0)
                                 ? 'text-yellow-400 fill-current'
                                 : 'text-gray-300'
                             }
@@ -39,10 +39,10 @@ const CPSummary = ({ selected }) => {
                         ))}
                       </div>
                       <span className="text-blue-600 text-sm ml-1">
-                        ({software.totalReviews})
+                        ({software.rating?.totalReviews || 0})
                       </span>
                       <span className="text-sm ml-1">
-                        {software.rating} out of 5
+                        {software.rating?.score?.toFixed(1) || 'N/A'} out of 5
                       </span>
                     </div>
                   </div>
@@ -60,11 +60,14 @@ const CPSummary = ({ selected }) => {
                 <div className="py-4 pl-4 pr-8 font-medium h-full flex items-start">Platform Supported</div>
                 {selected.map((software, index) => (
                   <div key={index} className="py-4 px-6">
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-wrap gap-2">
                       {software.platforms.map((platform, i) => (
-                        <div key={i} className="text-sm leading-relaxed">
+                        <span 
+                          key={i} 
+                          className="text-sm px-2 py-1 bg-gray-100 rounded-full"
+                        >
                           {platform}
-                        </div>
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -82,7 +85,16 @@ const CPSummary = ({ selected }) => {
                 <div className="py-4 pl-4 pr-8 font-medium h-full flex items-center">Starting Price</div>
                 {selected.map((software, index) => (
                   <div key={index} className="py-4 px-6 h-full flex items-center">
-                    <span className="text-sm">{software.price}</span>
+                    <div className="flex flex-col gap-1">
+                      {software.pricing?.hasFreeVersion && (
+                        <span className="text-sm text-green-600">Free Version Available</span>
+                      )}
+                      {software.pricing?.plans?.length > 0 && (
+                        <span className="text-sm">
+                          Starts at ${software.pricing.plans[0].price.amount}/{software.pricing.plans[0].price.period}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -99,7 +111,7 @@ const CPSummary = ({ selected }) => {
                 {selected.map((software, index) => (
                   <div key={index} className="py-4 px-6">
                     <p className="text-sm leading-relaxed text-gray-600">
-                      {software.summary}
+                      {software.briefOverview}
                     </p>
                   </div>
                 ))}
