@@ -40,6 +40,12 @@ const Hero = () => {
     setSearchTerm('');
   };
 
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+    }
+  };
+
   return (
     <div className="hero bg-sky-200 min-h-96">
       <div className="hero-content flex-col lg:flex-row-reverse">
@@ -77,8 +83,16 @@ const Hero = () => {
                   setShowSuggestions(true);
                 }}
                 onFocus={() => setShowSuggestions(true)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearch();
+                  }
+                }}
               />
-              <button className="btn btn-outline btn-primary rounded-full">
+              <button 
+                className="btn btn-outline btn-primary rounded-full"
+                onClick={handleSearch}
+              >
                 Find AI Tool
               </button>
             </label>

@@ -1,11 +1,14 @@
 import express from "express"
-import {createAISoftware, getAISoftware, getSoftwareById, searchSoftware} from "../controllers/aiSoftwareController.js";
+import {createAISoftware, getAISoftware, getAllFeatures, getSoftwareById, searchSoftware} from "../controllers/aiSoftwareController.js";
 
 const router = express.Router();
 
 router.get('/search', searchSoftware);
+router.get('/features', getAllFeatures);
+
 router.get("/", getAISoftware);
 router.post("/", createAISoftware);
+
 router.get("/:id", getSoftwareById);
 /*router.put("/:id", updateAISoftware);
 router.delete("/:id", deleteAISoftware);

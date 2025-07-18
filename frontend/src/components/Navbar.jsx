@@ -1,9 +1,18 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const Navbar = () => {
-
   const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSearch(false);
+      setSearchQuery("");
+    }
+  };
 
   return (
     <header className='bg-base-100 border-b border-base-content/10'>
@@ -64,11 +73,17 @@ const Navbar = () => {
                         placeholder="Search"
                         className="input input-bordered w-32 md:w-auto pr-8"
                         autoFocus
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={handleSearch}
                     />
                     <button
                         type="button"
                         className="absolute right-2 top-1/2 -translate-y-1/2 text-base-content/60 hover:text-error"
-                        onClick={() => setShowSearch(false)}
+                        onClick={() => {
+                          setShowSearch(false);
+                          setSearchQuery("");
+                        }}
                         aria-label="Close search"
                         tabIndex={0}
                     >

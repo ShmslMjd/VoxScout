@@ -180,24 +180,137 @@ export const addSoftwareReview = async (req, res) => {
 // Search software
 export const searchSoftware = async (req, res) => {
   try {
-    const { q } = req.query;
+    const { 
+      q, 
+      sort = 'latest', 
+      limit = 12, 
+      page = 1,
+      minPrice = 0,
+      maxPrice = 1000,
+      ratings = '',
+      minDownloads = 0,
+      maxDownloads = Number.MAX_SAFE_INTEGER,
+      features = ''
+    } = req.query;
 
     if (!q) {
       return res.status(400).json({ message: "Search query is required" });
     }
 
-    // Search only in name field
-    const software = await Software.find({
+    // Build base query
+    let query = {
       name: { $regex: q, $options: 'i' }
-    })
-    .select('name logo category company.name rating _id')
-    .limit(5);
+    };
 
-    res.status(200).json(software);
+    // Add price filter
+    if (minPrice || maxPrice) {
+      query['pricing.plans.price.amount'] = {
+        $gte: parseInt(minPrice),
+        $lte: parseInt(maxPrice)
+      };
+    }
+
+    // Add ratings filter
+    if (ratings) {
+      const ratingValues = ratings.split(',').map(Number);
+      if (ratingValues.length > 0) {
+        query['rating.score'] = {
+          $gte: Math.min(...ratingValues),
+          $lt: Math.max(...ratingValues) + 1
+        };
+      }
+    }
+
+    // Add downloads filter
+    query.downloads = {
+      $gte: parseInt(minDownloads),
+      $lte: parseInt(maxDownloads)
+    };
+
+    // Add features filter
+    if (features) {
+      const featureList = features.split(',');
+      if (featureList.length > 0) {
+        query['features.title'] = { $in: featureList };
+      }
+    }
+
+    // Build sort options
+    let sortOptions = {};
+    switch (sort) {
+      case 'latest':
+        sortOptions = { createdAt: -1 };
+        break;
+      case 'popular':
+        sortOptions = { downloads: -1 };
+        break;
+      case 'rating':
+        sortOptions = { 'rating.score': -1 };
+        break;
+      default:
+        sortOptions = { createdAt: -1 };
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // Execute query with all filters
+    const [software, total] = await Promise.all([
+      Software.find(query)
+        .sort(sortOptions)
+        .skip(skip)
+        .limit(parseInt(limit))
+        .select('name logo category company.name rating _id downloads createdAt pricing features'),
+      Software.countDocuments(query)
+    ]);
+
+    res.status(200).json({
+      results: software,
+      pagination: {
+        total,
+        page: parseInt(page),
+        pages: Math.ceil(total / parseInt(limit))
+      }
+    });
   } catch (error) {
     console.error("Error searching software:", error);
     res.status(500).json({ 
       message: "Error searching software", 
+      error: error.message 
+    });
+  }
+};
+
+// Get all unique features from software
+export const getAllFeatures = async (req, res) => {
+  try {
+    // Aggregate to get unique features from all software
+    const features = await Software.aggregate([
+      // Unwind features array
+      { $unwind: '$features' },
+      // Group by feature title and count occurrences
+      { 
+        $group: {
+          _id: '$features.title',
+          count: { $sum: 1 }
+        }
+      },
+      // Sort by count in descending order
+      { $sort: { count: -1 } },
+      // Project to reshape the output
+      {
+        $project: {
+          _id: 0,
+          title: '$_id',
+          count: 1
+        }
+      }
+    ]);
+
+    res.status(200).json(features);
+  } catch (error) {
+    console.error('Error fetching features:', error);
+    res.status(500).json({ 
+      message: 'Error fetching features', 
       error: error.message 
     });
   }
