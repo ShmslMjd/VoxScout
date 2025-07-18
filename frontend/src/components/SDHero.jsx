@@ -1,31 +1,88 @@
-import { Star, Bookmark, PlayCircle } from "lucide-react";
-import elevenlabsLogo from "../img/homePage/elevenlabs.png";
-import mic from "../img/softwareDetailPage/mic.jpg";
+import { Star, StarHalf, Bookmark, PlayCircle } from "lucide-react";
 
-const SoftwareDetail = () => {
-  // Dummy data for now
-  const software = {
-    name: "Elevenlabs",
-    by: "Elevenlabs",
-    logo: elevenlabsLogo,
-    banner: mic,
-    rating: 5,
-    reviews: 3784,
-    website: "https://elevenlabs.io",
+const SDHero = ({ software }) => {
+  const isVideo = (url) => {
+    const videoExtensions = ['.mp4', '.webm', '.ogg'];
+    return videoExtensions.some(ext => url?.toLowerCase().endsWith(ext));
   };
+
+  const renderStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+
+    // Full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <div key={`full-${i}`} className="relative">
+          <Star
+            size={20}
+            className="absolute inset-0 text-orange-400 fill-orange-400"
+          />
+          <Star
+            size={20}
+            className="text-transparent stroke-[1.5] stroke-orange-500"
+          />
+        </div>
+      );
+    }
+
+    // Half star
+    if (hasHalfStar) {
+      stars.push(
+        <div key="half" className="relative">
+          <StarHalf
+            size={20}
+            className="absolute inset-0 text-orange-400 fill-orange-400"
+          />
+          <Star
+            size={20}
+            className="text-transparent stroke-[1.5] stroke-orange-500"
+          />
+        </div>
+      );
+    }
+
+    // Empty stars
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <div key={`empty-${i}`} className="relative">
+          <Star
+            size={20}
+            className="text-transparent stroke-[1.5] stroke-orange-500"
+          />
+        </div>
+      );
+    }
+
+    return stars;
+  };
+
+  if (!software) return null;
 
   return (
     <div className="max-w-7xl mx-auto mt-6">
       {/* Banner */}
       <div className="relative rounded-lg overflow-hidden">
-        <img
-          src={software.banner}
-          alt="Banner"
-          className="w-full h-56 md:h-72 object-cover"
-        />
-        <button className="absolute inset-0 flex items-center justify-center">
-          <PlayCircle size={48} className="text-white/80 hover:text-white" />
-        </button>
+        {isVideo(software.profileHeader) ? (
+          <>
+            <video
+              src={software.profileHeader}
+              poster={software.logo}
+              className="w-full h-56 md:h-72 object-cover"
+            />
+            <button className="absolute inset-0 flex items-center justify-center">
+              <PlayCircle size={48} className="text-white/80 hover:text-white" />
+            </button>
+          </>
+        ) : (
+          <img
+            src={software.profileHeader}
+            alt="Banner"
+            className="w-full h-56 md:h-72 object-cover"
+          />
+        )}
       </div>
       {/* Card */}
       <div className="bg-white rounded-lg shadow flex flex-col md:flex-row items-center gap-6 px-6 py-6 -mt-16 relative z-10">
@@ -37,13 +94,13 @@ const SoftwareDetail = () => {
         <div className="flex-1">
           <h2 className="text-2xl font-bold">{software.name}</h2>
           <div className="text-sm text-blue-600 mb-2">
-            By <a href="#" className="hover:underline">{software.by}</a>
+            By <a href="#" className="hover:underline">{software.developer}</a>
           </div>
           <div className="flex items-center gap-1 text-yellow-500 mb-1">
-            {[...Array(software.rating)].map((_, i) => (
-              <Star key={i} size={18} className="fill-yellow-400" />
-            ))}
-            <span className="text-gray-700 ml-2 font-medium">{software.reviews} Reviews</span>
+            {renderStars(software.rating?.score || 0)}
+            <span className="text-gray-700 ml-2 font-medium">
+              ({software.rating?.totalReviews || 0} Reviews)
+            </span>
           </div>
         </div>
         {/* Actions */}
@@ -52,7 +109,7 @@ const SoftwareDetail = () => {
             <Bookmark size={20} />
           </button>
           <a
-            href={software.website}
+            href={software.websiteUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary"
@@ -78,4 +135,4 @@ const SoftwareDetail = () => {
   );
 };
 
-export default SoftwareDetail;
+export default SDHero;

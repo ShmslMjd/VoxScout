@@ -119,6 +119,14 @@ const CPSoftwareSelection = ({ selected, setSelected, softwareList }) => {
     setSelected(newSelected);
   };
 
+  const handleSelect = (software) => {
+    if (selected.find(s => s._id === software._id)) {
+      setSelected(selected.filter(s => s._id !== software._id));
+    } else if (selected.length < 3) {
+      setSelected([...selected, software]);
+    }
+  };
+
   return (
     <div className="w-full bg-gray-50">
       {/* Container with padding */}

@@ -1,79 +1,66 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
-import RateLimitedUI from '../components/RateLimitedUI';
-import toast from 'react-hot-toast';
-import SoftwareCard from '../components/SoftwareCard';
-import api from '../lib/axios';
 import Hero from '../components/Hero';
 import HowTo from '../components/HowTo';
 import PopularTools from '../components/PopularTools';
 import PopularCategories from '../components/PopularCategories';
 import Footer from '../components/Footer';
+import RateLimitedUI from '../components/RateLimitedUI';
+import api from '../lib/axios';
+import toast from 'react-hot-toast';
 
 const HomePage = () => {
-  /*const [israteLimited, setRateLimited] = useState(false);
+  const [israteLimited, setRateLimited] = useState(false);
   const [softwares, setSoftwares] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchSoftware = async () => {
-        try {
-            //axios is used to make HTTP requests
-            //Here we are making a GET request to the backend API to fetch software data
-            const res = await api.get("/audio");
-            console.log(res.data);
-            setSoftwares(res.data);
-            setRateLimited(false);
-        } catch (error) {
-            console.log('Error fetching software');
-            if(error.response?.status === 429) {
-                setRateLimited(true);
-            }else{
-                toast.error('Failed to fetch software data');
-            }
-        }finally {
-            setLoading(false);
+      try {
+        const res = await api.get("/audio");
+        setSoftwares(res.data);
+        setRateLimited(false);
+      } catch (error) {
+        console.error('Error fetching software:', error);
+        if (error.response?.status === 429) {
+          setRateLimited(true);
+          toast.error('Rate limit reached. Please try again later.');
+        } else {
+          setError(error.message);
+          toast.error('Failed to fetch software data');
         }
-    }
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchSoftware();
-  
-  },[])
+  }, []);
+
+  if (israteLimited) {
+    return (
+      <div className='min-h-screen'>
+        <Navbar />
+        <RateLimitedUI />
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen'>
-        <Navbar />
-
-        {israteLimited && <RateLimitedUI/>}
-
-        <div className="max-w-7xl mx-auto p-4 mt-6">
-            {loading && <div className="text-center text-primary py-10">Loading Software ...</div>}
-
-            {softwares.length > 0 && !israteLimited && (
-                <div className= "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {softwares.map((software) => (
-                        <SoftwareCard key={software._id} software={software}/>
-                    ))}
-                </div>
-            )}
-
-        </div>
-
+      <Navbar />
+      <Hero />
+      <HowTo />
+      <PopularTools 
+        tools={softwares} 
+        loading={loading} 
+        error={error}
+      />
+      <PopularCategories softwares={softwares} />
+      <Footer />
     </div>
-  )*/
+  );
+};
 
-
-    return(
-        <div className='min-h-screen'>
-            <Navbar/>
-            <Hero/>
-            <HowTo/>
-            <PopularTools/>
-            <PopularCategories/>
-            <Footer/>
-        </div>
-    )
-
-}
-
-export default HomePage
+export default HomePage;

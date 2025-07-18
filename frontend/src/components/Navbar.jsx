@@ -37,7 +37,7 @@ const Navbar = () => {
             </div>
             <div className="navbar-center">
                 <Link to="/">
-                    <img alt="VoxScout logo" src="src/img/favicons/vox-scout-nobg-32.png" />
+                    <img alt="VoxScout logo" src="/src/img/favicons/vox-scout-nobg-32.png" />
                 </Link>
             </div>
             <div className="navbar-end">

@@ -1,46 +1,35 @@
 import { useState } from "react";
 
-const plans = [
-	{
-		name: "Free",
-		price: "$0.00",
-		desc: "Per User, Per Month",
-	},
-	{
-		name: "Plus",
-		price: "$12.00",
-		desc: "Per User, Per Month",
-	},
-	{
-		name: "Business",
-		price: "$18.00",
-		desc: "Per User, Per Month",
-	},
-	{
-		name: "Business Pro",
-		price: "$20.00",
-		desc: "Per User, Per Month",
-	},
-	{
-		name: "Enterprice",
-		price: "Contact Us",
-		desc: "",
-	},
-];
-
-const SDPricing = () => {
+const SDPricing = ({ software }) => {
 	const [page, setPage] = useState(0);
 	const [direction, setDirection] = useState("right"); // "left" or "right"
 
+	// Get pricing plans from software model
+	const plans =
+		software?.pricing?.plans?.map((plan) => ({
+			name: plan.name,
+			price:
+				plan.price?.amount &&
+				`$${plan.price.amount}${
+					plan.price.period === "monthly"
+						? "/mo"
+						: plan.price.period === "yearly"
+						? "/yr"
+						: ""
+				}`,
+			desc: plan.features?.[0] || "", // Show first feature as description
+			features: plan.features || [],
+			limitations: plan.limitations || [],
+		})) || [];
+
 	const PLANS_PER_PAGE = 4;
 	const maxStart = Math.max(0, plans.length - PLANS_PER_PAGE);
-
 	const pagedPlans = plans.slice(page, page + PLANS_PER_PAGE);
 
 	return (
 		<section className="bg-slate-50 max-w-7xl mx-auto">
 			<div className="max-w-7xl mx-auto bg-white rounded-2xl shadow p-8">
-				<h2 className="text-3xl font-bold mb-8">Elevenlabs pricing</h2>
+				<h2 className="text-3xl font-bold mb-8">{software?.name} Pricing</h2>
 				<div
 					className={`grid grid-cols-1 md:grid-cols-4 gap-6 justify-start mb-8 transition-transform duration-300 ${
 						direction === "right"
@@ -59,11 +48,66 @@ const SDPricing = () => {
 							style={{ minWidth: 0 }}
 						>
 							<div className="text-xl font-semibold mb-2">{plan.name}</div>
-							<div className="text-3xl font-bold mb-2">{plan.price}</div>
-							<div className="text-gray-500">{plan.desc}</div>
+							<div className="text-3xl font-bold mb-4">{plan.price}</div>
+							<div className="text-gray-500 mb-4">{plan.desc}</div>
+
+							{/* Features List */}
+							<ul className="text-sm text-left space-y-2 mt-4">
+								{plan.features.map((feature, idx) => (
+									<li key={idx} className="flex items-start">
+										<svg
+											className="w-5 h-5 text-green-500 mr-2"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												d="M5 13l4 4L19 7"
+											></path>
+										</svg>
+										{feature}
+									</li>
+								))}
+							</ul>
+
+							{/* Limitations List */}
+							{plan.limitations.length > 0 && (
+								<ul className="text-sm text-left space-y-2 mt-4">
+									{plan.limitations.map((limitation, idx) => (
+										<li key={idx} className="flex items-start text-gray-500">
+											<svg
+												className="w-5 h-5 text-gray-400 mr-2"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth="2"
+													d="M6 18L18 6M6 6l12 12"
+												></path>
+											</svg>
+											{limitation}
+										</li>
+									))}
+								</ul>
+							)}
 						</div>
 					))}
 				</div>
+
+				{/* Trial Period Info */}
+				{software?.pricing?.hasFreeTrialPeriod && (
+					<div className="text-center text-sm text-gray-600 my-4">
+						Try free for {software.pricing.freeTrialDays} days
+					</div>
+				)}
+
+				{/* Pagination Controls */}
 				<div className="flex items-center justify-center gap-4 mb-4">
 					<button
 						className="text-gray-400 px-2 py-1 rounded disabled:opacity-50"
@@ -102,14 +146,7 @@ const SDPricing = () => {
 						&gt;
 					</button>
 				</div>
-				<div className="text-left">
-					<a
-						href="#"
-						className="text-blue-600 hover:underline text-sm font-medium"
-					>
-						See pricing plan details
-					</a>
-				</div>
+
 			</div>
 		</section>
 	);
