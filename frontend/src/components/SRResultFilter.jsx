@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Filter, ChevronDown, Star, Bookmark } from 'lucide-react';
+import { Filter, ChevronDown, Star, Heart } from 'lucide-react'; // Change Bookmark to Heart for consistency
 import { useNavigate } from 'react-router';
+import { useAuth } from '../context/AuthContext'; // Add Auth context
 import api from '../lib/axios';
+import toast from 'react-hot-toast'; // Add toast for notifications
 
 const SRResultFilter = ({ searchQuery }) => {
   // Base states
@@ -29,6 +31,9 @@ const SRResultFilter = ({ searchQuery }) => {
   const [tempDownloadRange, setTempDownloadRange] = useState({ min: 0, max: 100000 });
   const [selectedFeatures, setSelectedFeatures] = useState([]);
 
+  // Add bookmark state
+  const [bookmarkedTools, setBookmarkedTools] = useState(new Set());
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Fetch features when component mounts
@@ -93,6 +98,23 @@ const SRResultFilter = ({ searchQuery }) => {
     downloadRange,
     selectedFeatures
   ]);
+
+  // Add useEffect to fetch bookmarks
+  useEffect(() => {
+    const fetchBookmarks = async () => {
+      if (user) {
+        try {
+          const response = await api.get('/users/bookmarks');
+          const bookmarkedIds = new Set(response.data.map(b => b._id));
+          setBookmarkedTools(bookmarkedIds);
+        } catch (error) {
+          console.error('Error fetching bookmarks:', error);
+        }
+      }
+    };
+
+    fetchBookmarks();
+  }, [user]);
 
   // Section toggling
   const toggleSection = (section) => {
@@ -181,6 +203,36 @@ const SRResultFilter = ({ searchQuery }) => {
 
   const handleViewSoftware = (softwareId) => {
     navigate(`/software/${softwareId}`);
+  };
+
+  // Add bookmark handler
+  const handleBookmark = async (e, toolId) => {
+    e.stopPropagation();
+    
+    if (!user) {
+      toast.error('Please login to bookmark tools');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      if (bookmarkedTools.has(toolId)) {
+        await api.delete(`/users/bookmarks/${toolId}`);
+        setBookmarkedTools(prev => {
+          const next = new Set(prev);
+          next.delete(toolId);
+          return next;
+        });
+        toast.success('Tool removed from bookmarks');
+      } else {
+        await api.post(`/users/bookmarks/${toolId}`);
+        setBookmarkedTools(prev => new Set([...prev, toolId]));
+        toast.success('Tool added to bookmarks');
+      }
+    } catch (err) {
+      console.error('Bookmark error:', err);
+      toast.error('Failed to update bookmark');
+    }
   };
 
   return (
@@ -519,8 +571,18 @@ const SRResultFilter = ({ searchQuery }) => {
                     </div>
                   </div>
                   <div className="flex items-center gap-4 ml-4">
-                    <button className="text-gray-400 hover:text-gray-600 transition-colors">
-                      <Bookmark className="w-5 h-5" />
+                    <button 
+                      className={`transition-colors ${
+                        bookmarkedTools.has(software._id) 
+                          ? 'text-red-500 hover:text-red-600' 
+                          : 'text-gray-400 hover:text-red-400'
+                      }`}
+                      onClick={(e) => handleBookmark(e, software._id)}
+                    >
+                      <Heart 
+                        className="w-5 h-5"
+                        fill={bookmarkedTools.has(software._id) ? "currentColor" : "none"}
+                      />
                     </button>
                     <button 
                       onClick={() => handleViewSoftware(software._id)}

@@ -1,28 +1,81 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookmarkX } from 'lucide-react';
 import UABookmarkCard from './UABookmarkCard';
+import api from '../lib/axios';
+import toast from 'react-hot-toast';
+import { Link } from 'react-router';
 
-const UABookmarks = ({ user }) => {
-  const handleRemoveBookmark = (toolId) => {
-    // TODO: Implement bookmark removal logic
-    console.log('Removing bookmark:', toolId);
+const UABookmarks = () => {
+  const [bookmarks, setBookmarks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchBookmarks();
+  }, []);
+
+  const fetchBookmarks = async () => {
+    try {
+      const response = await api.get('/users/bookmarks');
+      setBookmarks(response.data);
+    } catch (err) {
+      setError('Failed to load bookmarks');
+      console.error('Error fetching bookmarks:', err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleRemoveBookmark = async (toolId) => {
+    try {
+      await api.delete(`/users/bookmarks/${toolId}`);
+      setBookmarks(bookmarks.filter(tool => tool._id !== toolId));
+      toast.success('Tool removed from bookmarks');
+    } catch (err) {
+      toast.error('Failed to remove bookmark');
+      console.error('Error removing bookmark:', err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12 text-red-600">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-medium text-gray-900">Bookmarked Tools</h2>
         <span className="text-sm text-gray-500">
-          {user.bookmarks.length} tools saved
+          {bookmarks.length} tools saved
         </span>
       </div>
 
-      {user.bookmarks.length > 0 ? (
+      {bookmarks.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {user.bookmarks.map((tool) => (
+          {bookmarks.map((tool) => (
             <UABookmarkCard
-              key={tool.id}
-              tool={tool}
+              key={tool._id}
+              tool={{
+                id: tool._id,
+                name: tool.name,
+                logo: tool.logo,
+                rating: tool.rating?.score || 0,
+                totalReviews: tool.rating?.totalReviews || 0,
+                summary: tool.description,
+                platforms: tool.platforms || []
+              }}
               onRemove={handleRemoveBookmark}
             />
           ))}
@@ -36,12 +89,12 @@ const UABookmarks = ({ user }) => {
           <p className="mt-2 text-sm text-gray-500">
             Start exploring and bookmark the tools you're interested in.
           </p>
-          <a
-            href="/explore"
+          <Link
+            to="/"
             className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
           >
             Explore Tools
-          </a>
+          </Link>
         </div>
       )}
     </div>

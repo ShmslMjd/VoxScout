@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const { user, logout: authLogout } = useAuth(); // Use AuthContext instead of local state
 
   const handleSearch = (e) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
@@ -12,6 +14,11 @@ const Navbar = () => {
       setShowSearch(false);
       setSearchQuery("");
     }
+  };
+
+  const handleLogout = () => {
+    authLogout(); // Use the logout function from AuthContext
+    navigate('/login');
   };
 
   return (
@@ -104,26 +111,36 @@ const Navbar = () => {
                     </button>
                     </div>
                 )}
-                <div className="dropdown dropdown-end">
+                {user ? (
+                  <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                        <div className="w-10 rounded-full">
-                        <img
-                            alt="Tailwind CSS Navbar component"
-                            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                        </div>
+                      <div className="w-10 rounded-full">
+                        <img 
+                          alt={user.name} 
+                          src={user.profileImage || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name)}
+                          onError={(e) => {
+                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`;
+                          }}
+                        />
+                      </div>
                     </div>
-                    <ul
-                        tabIndex={0}
-                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                        <li>
-                        <a className="justify-between">
-                            Profile
+                    <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                      <li>
+                        <a onClick={() => navigate('/profile')} className="justify-between">
+                          Profile
                         </a>
-                        </li>
-                        <li><a>Settings</a></li>
-                        <li><a>Logout</a></li>
+                      </li>
+                      <li><a onClick={handleLogout}>Logout</a></li>
                     </ul>
-                </div>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => navigate('/login')} 
+                    className="btn btn-primary"
+                  >
+                    Sign In
+                  </button>
+                )}
             </div>
         </div>
     </header>

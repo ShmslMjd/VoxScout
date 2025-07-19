@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router"; // Add this import
+import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
 import Slider from "react-slick";
 import { ChevronLeft, ChevronRight, Star, Heart } from "lucide-react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import api from '../lib/axios';
+import toast from 'react-hot-toast';
 
 // Custom arrow components
 const Arrow = ({ className, style, onClick, direction }) => (
@@ -29,28 +31,71 @@ const PopularTools = () => {
   const [tools, setTools] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Add this hook
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-  // Fetch software data
+  // Add bookmarked state
+  const [bookmarkedTools, setBookmarkedTools] = useState(new Set());
+
+  // Fetch tools and user's bookmarks
   useEffect(() => {
-    const fetchTools = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get('/audio');
-        // Sort by downloads and get top 5
-        const sortedTools = response.data
+        const [toolsResponse, bookmarksResponse] = await Promise.all([
+          api.get('/audio'),
+          user ? api.get('/users/bookmarks') : Promise.resolve({ data: [] })
+        ]);
+
+        const sortedTools = toolsResponse.data
           .sort((a, b) => b.downloads - a.downloads)
           .slice(0, 5);
+        
         setTools(sortedTools);
+        
+        // Set bookmarked tools
+        if (bookmarksResponse.data) {
+          const bookmarkedIds = new Set(bookmarksResponse.data.map(b => b._id));
+          setBookmarkedTools(bookmarkedIds);
+        }
       } catch (err) {
-        console.error('Error fetching tools:', err);
+        console.error('Error fetching data:', err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTools();
-  }, []);
+    fetchData();
+  }, [user]);
+
+  const handleBookmark = async (e, toolId) => {
+    e.stopPropagation();
+    
+    if (!user) {
+      toast.error('Please login to bookmark tools');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      if (bookmarkedTools.has(toolId)) {
+        await api.delete(`/users/bookmarks/${toolId}`);
+        setBookmarkedTools(prev => {
+          const next = new Set(prev);
+          next.delete(toolId);
+          return next;
+        });
+        toast.success('Tool removed from bookmarks');
+      } else {
+        await api.post(`/users/bookmarks/${toolId}`);
+        setBookmarkedTools(prev => new Set([...prev, toolId]));
+        toast.success('Tool added to bookmarks');
+      }
+    } catch (err) {
+      console.error('Bookmark error:', err);
+      toast.error('Failed to update bookmark');
+    }
+  };
 
   const settings = {
     dots: false,
@@ -119,13 +164,17 @@ const PopularTools = () => {
                     <div className="flex justify-between items-center">
                       <h2 className="card-title">{tool.name}</h2>
                       <button 
-                        className="text-gray-400 hover:text-red-400"
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent card click when clicking heart
-                          // Add wishlist functionality here
-                        }}
+                        className={`transition-colors ${
+                          bookmarkedTools.has(tool._id) 
+                            ? 'text-red-500 hover:text-red-600' 
+                            : 'text-gray-400 hover:text-red-400'
+                        }`}
+                        onClick={(e) => handleBookmark(e, tool._id)}
                       >
-                        <Heart size={18} />
+                        <Heart 
+                          size={18} 
+                          fill={bookmarkedTools.has(tool._id) ? "currentColor" : "none"}
+                        />
                       </button>
                     </div>
                     <div className="flex items-center gap-1 mt-1">

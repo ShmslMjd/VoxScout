@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star, Trash2 } from 'lucide-react';
+import { Link } from 'react-router';
 
 const UABookmarkCard = ({ tool, onRemove }) => {
   return (
@@ -11,6 +12,9 @@ const UABookmarkCard = ({ tool, onRemove }) => {
               src={tool.logo}
               alt={tool.name}
               className="w-full h-full object-contain"
+              onError={(e) => {
+                e.target.src = 'https://via.placeholder.com/48?text=' + tool.name.charAt(0);
+              }}
             />
           </div>
           <div>
@@ -36,7 +40,7 @@ const UABookmarkCard = ({ tool, onRemove }) => {
       <p className="mt-3 text-sm text-gray-600 line-clamp-2">{tool.summary}</p>
       <div className="mt-4 flex items-center justify-between">
         <div className="flex gap-2">
-          {tool.platforms.map((platform, index) => (
+          {tool.platforms?.map((platform, index) => (
             <span
               key={index}
               className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
@@ -45,12 +49,12 @@ const UABookmarkCard = ({ tool, onRemove }) => {
             </span>
           ))}
         </div>
-        <a
-          href={`/software/${tool.id}`}
+        <Link
+          to={`/software/${tool.id}`}
           className="text-sm font-medium text-blue-600 hover:text-blue-700"
         >
           View Details
-        </a>
+        </Link>
       </div>
     </div>
   );

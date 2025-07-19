@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import aiSoftwareRoutes from "./routes/aiSoftwareRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import { connectDB } from "./config/db.js";
 import rateLimiter from "./middleware/rateLimiter.js";
 
@@ -27,6 +28,7 @@ app.use(rateLimiter);
 // });
 
 app.use("/api/audio", aiSoftwareRoutes);
+app.use('/api/users', userRoutes);
 
 connectDB().then(() => {
     app.listen(PORT, () => {
