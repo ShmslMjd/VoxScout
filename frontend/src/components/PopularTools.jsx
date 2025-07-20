@@ -178,7 +178,7 @@ const PopularTools = () => {
                       </button>
                     </div>
                     <div className="flex items-center gap-1 mt-1">
-                      {[...Array(Math.round(tool.rating?.score || 0))].map((_, i) => (
+                      {[...Array(Math.floor(tool.rating?.score || 0))].map((_, i) => (
                         <Star
                           key={i}
                           size={14}

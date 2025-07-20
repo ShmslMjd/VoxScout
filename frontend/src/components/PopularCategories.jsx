@@ -101,7 +101,15 @@ const PopularCategories = ({ softwares }) => {
                 <div className="w-full flex justify-between items-center mb-2">
                   <span className="font-semibold text-sm">{sw.name}</span>
                   <div className="flex items-center gap-1">
-                    <Star size={16} className="text-red-500 fill-red-500" />
+                    <div className="flex items-center">
+                      {[...Array(Math.floor(sw.rating || 0))].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          size={16} 
+                          className="text-yellow-400 fill-yellow-400" 
+                        />
+                      ))}
+                    </div>
                     <span className="text-xs text-gray-600">
                       ({sw.reviews.toLocaleString()})
                     </span>
