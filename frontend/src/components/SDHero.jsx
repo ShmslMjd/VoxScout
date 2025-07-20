@@ -1,6 +1,53 @@
 import { Star, StarHalf, Bookmark, PlayCircle } from "lucide-react";
+import { useAuth } from '../context/AuthContext';
+import { useState, useEffect } from 'react';
+import api from '../lib/axios';
+import toast from 'react-hot-toast';
 
 const SDHero = ({ software }) => {
+  const { user } = useAuth();
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  // Check if tool is bookmarked on component mount
+  useEffect(() => {
+    const checkBookmarkStatus = async () => {
+      if (user) {
+        try {
+          const response = await api.get('/users/bookmarks');
+          const bookmarkedIds = new Set(response.data.map(b => b._id));
+          setIsBookmarked(bookmarkedIds.has(software._id));
+        } catch (error) {
+          console.error('Error checking bookmark status:', error);
+        }
+      }
+    };
+
+    checkBookmarkStatus();
+  }, [user, software._id]);
+
+  // Handle bookmark toggle
+  const handleBookmarkToggle = async () => {
+    if (!user) {
+      toast.error('Please login to bookmark tools');
+      return;
+    }
+
+    try {
+      if (isBookmarked) {
+        await api.delete(`/users/bookmarks/${software._id}`);
+        setIsBookmarked(false);
+        toast.success('Tool removed from bookmarks');
+      } else {
+        await api.post(`/users/bookmarks/${software._id}`);
+        setIsBookmarked(true);
+        toast.success('Tool added to bookmarks');
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+      toast.error('Failed to update bookmark');
+    }
+  };
+
   const isVideo = (url) => {
     const videoExtensions = ['.mp4', '.webm', '.ogg'];
     return videoExtensions.some(ext => url?.toLowerCase().endsWith(ext));
@@ -105,8 +152,16 @@ const SDHero = ({ software }) => {
         </div>
         {/* Actions */}
         <div className="flex flex-row gap-2 mt-4 md:mt-0">
-          <button className="btn btn-ghost btn-square">
-            <Bookmark size={20} />
+          <button 
+            onClick={handleBookmarkToggle}
+            className={`btn btn-ghost btn-square ${
+              isBookmarked ? 'text-blue-600' : 'text-gray-600'
+            }`}
+          >
+            <Bookmark 
+              size={20} 
+              fill={isBookmarked ? "currentColor" : "none"}
+            />
           </button>
           <a
             href={software.websiteUrl}

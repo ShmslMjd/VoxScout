@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import api from '../lib/axios';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const SDAlternative = ({ software }) => {
   const [alternatives, setAlternatives] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchAlternatives = async () => {
@@ -87,16 +90,25 @@ const SDAlternative = ({ software }) => {
     fetchAlternatives();
   }, [software]);
 
-  const handleCompareClick = (alternative) => {
+  const handleCompareClick = async (alternative) => {
     try {
-      // Only navigate with software IDs
+      const toolIds = [alternative.left.id, alternative.right.id];
+      
+      // Save comparison if user is logged in
+      if (user) {
+        await api.post('/users/comparisons', { toolIds });
+        toast.success('Comparison saved to history');
+      }
+
+      // Navigate to comparison page
       navigate('/compare', {
         state: {
-          selectedIds: [alternative.left.id, alternative.right.id]
+          selectedIds: toolIds
         }
       });
     } catch (error) {
-      console.error('Error preparing comparison:', error);
+      console.error('Error handling comparison:', error);
+      toast.error('Failed to save comparison');
     }
   };
 

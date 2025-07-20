@@ -13,25 +13,33 @@ export const register = async (req, res) => {
     const { name, email, password } = req.body;
 
     // Check if user already exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already registered' });
     }
 
     // Create new user
-    const user = new User({ name, email, password });
+    const user = new User({
+      name,
+      email,
+      password // Password will be hashed by the pre-save middleware
+    });
+
     await user.save();
 
     // Generate token
     const token = generateToken(user._id);
 
+    // Return user data without password
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
+      profileImage: user.profileImage,
       token
     });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(400).json({ message: error.message });
   }
 };
@@ -197,6 +205,92 @@ export const removeBookmark = async (req, res) => {
 
     res.json({ message: 'Tool removed from bookmarks' });
   } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Add comparison to history
+export const addComparison = async (req, res) => {
+  try {
+    const { toolIds } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Add new comparison
+    user.comparisonHistory.unshift({
+      softwares: toolIds,
+      date: new Date()
+    });
+
+    // Keep only last 10 comparisons
+    if (user.comparisonHistory.length > 10) {
+      user.comparisonHistory = user.comparisonHistory.slice(0, 10);
+    }
+
+    await user.save();
+
+    // Return populated comparison history
+    const populatedUser = await User.findById(user._id)
+      .populate('comparisonHistory.softwares', 'name logo');
+
+    res.json(populatedUser.comparisonHistory);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Get comparison history
+export const getComparisonHistory = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .populate('comparisonHistory.softwares', 'name logo');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(user.comparisonHistory);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Update user preferences
+export const updatePreferences = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Validate minRating
+    const minRating = parseFloat(req.body.minRating);
+    if (minRating < 1 || minRating > 5) {
+      return res.status(400).json({ 
+        message: 'Minimum rating must be between 1 and 5' 
+      });
+    }
+
+    // Update preferences including minRating
+    user.preferences = {
+      ...user.preferences,
+      budget: req.body.budget,
+      platforms: req.body.platforms,
+      features: req.body.features,
+      minRating: minRating,
+      notification: req.body.notification
+    };
+
+    await user.save();
+    const updatedUser = await User.findById(user._id).select('-password');
+    res.json(updatedUser);
+
+  } catch (error) {
+    console.error('Error updating preferences:', error);
     res.status(400).json({ message: error.message });
   }
 };

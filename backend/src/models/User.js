@@ -39,7 +39,8 @@ const userSchema = new mongoose.Schema({
       multiLanguage: { type: Boolean, default: false },
       customVoiceCreation: { type: Boolean, default: false },
       apiAccess: { type: Boolean, default: false }
-    }
+    },
+    minRating: { type: Number, default: 4, min: 1, max: 5 }
   },
   bookmarks: [{
     type: mongoose.Schema.Types.ObjectId,

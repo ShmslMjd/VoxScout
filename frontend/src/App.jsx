@@ -8,6 +8,7 @@ import UserACcount from './pages/UserACcount'
 import Login from './components/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext';
+import SignUpPage from './pages/SignUpPage'
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
             }
           />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<SignUpPage />} />
         </Routes>
       </div>
     </AuthProvider>

@@ -1,8 +1,38 @@
-import React, { useState } from 'react';
-import { Camera, Edit } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Camera } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import api from '../lib/axios';
+import toast from 'react-hot-toast';
 
-const UserProfileHeader = ({ user }) => {
+const UserProfileHeader = () => {
+  const { user: authUser } = useAuth();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get('/users/profile');
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        toast.error('Failed to load user data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-6">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-start gap-6">
@@ -13,11 +43,14 @@ const UserProfileHeader = ({ user }) => {
         onMouseLeave={() => setIsHovering(false)}
       >
         <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100">
-          {user?.profilePicture ? (
+          {user?.profileImage ? (
             <img 
-              src={user.profilePicture} 
+              src={user.profileImage} 
               alt="Profile" 
               className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`;
+              }}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-blue-50 text-blue-600">
@@ -38,17 +71,11 @@ const UserProfileHeader = ({ user }) => {
 
       {/* User Info Section */}
       <div className="flex-1">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
-              {user?.name || 'User Name'}
-            </h1>
-            <p className="text-gray-500">{user?.email || 'user@example.com'}</p>
-          </div>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-            <Edit className="w-4 h-4" />
-            Edit Profile
-          </button>
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            {user?.name}
+          </h1>
+          <p className="text-gray-500">{user?.email}</p>
         </div>
 
         {/* Additional Info */}
@@ -61,15 +88,15 @@ const UserProfileHeader = ({ user }) => {
           </div>
           <div>
             <div className="text-2xl font-semibold text-gray-900">
-              {user?.comparisons?.length || 0}
+              {user?.comparisonHistory?.length || 0}
             </div>
             <div className="text-sm text-gray-500">Comparisons</div>
           </div>
           <div>
             <div className="text-2xl font-semibold text-gray-900">
-              {user?.preferences?.length || 0}
+              {Object.values(user?.preferences?.features || {}).filter(Boolean).length || 0}
             </div>
-            <div className="text-sm text-gray-500">Preferences Set</div>
+            <div className="text-sm text-gray-500">Active Preferences</div>
           </div>
         </div>
       </div>

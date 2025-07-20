@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, getProfile, updateProfile, changePassword, getUserBookmarks, addBookmark, removeBookmark } from '../controllers/userController.js';
+import { register, login, getProfile, updateProfile, changePassword, getUserBookmarks, addBookmark, removeBookmark, addComparison, getComparisonHistory, updatePreferences } from '../controllers/userController.js';
 import auth from '../middleware/auth.js';
 
 const router = express.Router();
@@ -12,5 +12,8 @@ router.put('/change-password', auth, changePassword);
 router.get('/bookmarks', auth, getUserBookmarks);
 router.post('/bookmarks/:toolId', auth, addBookmark);
 router.delete('/bookmarks/:toolId', auth, removeBookmark);
+router.post('/comparisons', auth, addComparison);
+router.get('/comparisons', auth, getComparisonHistory);
+router.put('/preferences', auth, updatePreferences);
 
 export default router;

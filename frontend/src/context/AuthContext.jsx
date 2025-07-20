@@ -4,7 +4,10 @@ import api from '../lib/axios';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,6 +31,13 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
   }, []);
 
+  // Update localStorage when user changes
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+  }, [user]);
+
   const login = async (email, password) => {
     const response = await api.post('/users/login', { email, password });
     const { token, ...userData } = response.data;
@@ -41,6 +51,32 @@ export const AuthProvider = ({ children }) => {
     return userData;
   };
 
+  const register = async (name, email, password) => {
+    try {
+      const response = await api.post('/users/register', {
+        name,
+        email,
+        password
+      });
+      
+      const { token, ...userData } = response.data;
+      
+      // Save token and user data
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      // Set auth header
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      // Update user state
+      setUser(userData);
+      
+      return userData;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -49,7 +85,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, setUser }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, register, setUser }}>
       {!loading && children}
     </AuthContext.Provider>
   );
