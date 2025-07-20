@@ -18,9 +18,14 @@ const Hero = () => {
       }
 
       try {
-        // Update API endpoint to match your backend route
-        const response = await api.get(`/audio/search?q=${searchTerm}`);
-        setSuggestions(response.data);
+        const response = await api.get(`/audio/search`, {
+          params: {
+            q: searchTerm,
+            limit: 5, // Limit suggestions to 5 results
+          },
+        });
+        // Make sure we're using the results array from the response
+        setSuggestions(response.data.results || []);
       } catch (error) {
         console.error('Error fetching suggestions:', error);
         setSuggestions([]);
@@ -55,7 +60,9 @@ const Hero = () => {
           alt="Hero"
         />
         <div>
-          <h1 className="text-5xl font-bold">Find the Right AI Audio tools for you!</h1>
+          <h1 className="text-5xl font-bold">
+            Find the Right AI Audio tools for you!
+          </h1>
           <p className="py-6">
             Explore and compare diverse tools to suits your need search now.
           </p>
@@ -89,7 +96,7 @@ const Hero = () => {
                   }
                 }}
               />
-              <button 
+              <button
                 className="btn btn-outline btn-primary rounded-full"
                 onClick={handleSearch}
               >
@@ -113,7 +120,9 @@ const Hero = () => {
                     />
                     <div>
                       <div className="font-medium">{software.name}</div>
-                      <div className="text-sm text-gray-500">{software.category}</div>
+                      <div className="text-sm text-gray-500">
+                        {software.category}
+                      </div>
                     </div>
                   </div>
                 ))}
