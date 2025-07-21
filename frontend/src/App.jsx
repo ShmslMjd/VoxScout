@@ -4,7 +4,7 @@ import SearchResult from './pages/SearchResult'
 import SoftwareDetail from './pages/SoftwareDetail'
 import ComparePage from './pages/ComparePage'
 import CreatePage from './pages/CreatePage'
-import UserACcount from './pages/UserACcount'
+import UserACcount from './pages/UserAccount'
 import Login from './components/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext';
