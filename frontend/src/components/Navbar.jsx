@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
+import logo from '../img/favicons/vox-scout-nobg-32.png';
 
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
@@ -53,7 +54,7 @@ const Navbar = () => {
             </div>
             <div className="navbar-center">
                 <Link to="/">
-                    <img alt="VoxScout logo" src="/src/img/favicons/vox-scout-nobg-32.png" />
+                    <img alt="VoxScout logo" src={logo} />
                 </Link>
             </div>
             <div className="navbar-end">
