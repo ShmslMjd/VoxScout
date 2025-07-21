@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
+import logo from '../img/favicons/android-chrome-192x192-rbg.png'
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -35,7 +36,7 @@ const Login = () => {
         <div>
           <img
             className="mx-auto w-auto"
-            src="/src/img/favicons/android-chrome-192x192-rbg.png"
+            src= {logo}
             alt="VoxScout"
           />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">

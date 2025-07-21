@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import logo from '../img/favicons/android-chrome-192x192-rbg.png'
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const SignUpPage = () => {
         <div>
           <img
             className="mx-auto w-auto"
-            src="/src/img/favicons/android-chrome-192x192-rbg.png"
+            src={logo}
             alt="VoxScout"
           />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
