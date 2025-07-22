@@ -54,19 +54,47 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+    // Check if account is locked
+    if (user.loginAttempts?.lockUntil && user.loginAttempts.lockUntil > new Date()) {
+      const minutesLeft = Math.ceil((user.loginAttempts.lockUntil - new Date()) / (60 * 1000));
+      return res.status(423).json({ 
+        message: `Account is locked. Please try again in ${minutesLeft} minutes.`,
+        lockedUntil: user.loginAttempts.lockUntil
+      });
     }
+
+    const isMatch = await user.comparePassword(password);
+    
+    if (!isMatch) {
+      await user.incrementLoginAttempts();
+      
+      // Get updated user to check if it's now locked
+      const updatedUser = await User.findById(user._id);
+      const attemptsLeft = 5 - updatedUser.loginAttempts.count;
+      
+      if (updatedUser.loginAttempts.lockUntil) {
+        const minutesLeft = Math.ceil((updatedUser.loginAttempts.lockUntil - new Date()) / (60 * 1000));
+        return res.status(423).json({ 
+          message: `Account is locked. Please try again in ${minutesLeft} minutes.`,
+          lockedUntil: updatedUser.loginAttempts.lockUntil
+        });
+      }
+
+      return res.status(401).json({ 
+        message: `Invalid password. ${attemptsLeft} attempts remaining.`
+      });
+    }
+
+    // Reset login attempts on successful login
+    await user.resetLoginAttempts();
 
     const token = generateToken(user._id);
     
-    // Include profileImage in response
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      profileImage: user.profileImage, // Make sure this is included
+      profileImage: user.profileImage,
       token
     });
   } catch (error) {

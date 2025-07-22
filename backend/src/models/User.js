@@ -52,7 +52,12 @@ const userSchema = new mongoose.Schema({
       ref: 'Software'
     }],
     date: { type: Date, default: Date.now }
-  }]
+  }],
+  loginAttempts: {
+    count: { type: Number, default: 0 },
+    lastAttempt: { type: Date },
+    lockUntil: { type: Date }
+  }
 }, {
   timestamps: true
 });
@@ -73,6 +78,36 @@ userSchema.pre('save', async function(next) {
 // Method to compare password
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
+};
+
+// Add methods to handle login attempts
+userSchema.methods.incrementLoginAttempts = async function() {
+  // Reset if lock has expired
+  if (this.loginAttempts.lockUntil && this.loginAttempts.lockUntil < new Date()) {
+    this.loginAttempts = { count: 1, lastAttempt: new Date() };
+    await this.save();
+    return;
+  }
+
+  const updates = {
+    $inc: { 'loginAttempts.count': 1 },
+    $set: { 'loginAttempts.lastAttempt': new Date() }
+  };
+
+  if (this.loginAttempts.count + 1 >= 5) {
+    // Lock account for 30 minutes
+    updates.$set['loginAttempts.lockUntil'] = new Date(Date.now() + 30 * 60 * 1000);
+  }
+
+  await this.updateOne(updates);
+};
+
+userSchema.methods.resetLoginAttempts = async function() {
+  await this.updateOne({
+    $set: {
+      loginAttempts: { count: 0, lastAttempt: null, lockUntil: null }
+    }
+  });
 };
 
 const User = mongoose.model('User', userSchema);
