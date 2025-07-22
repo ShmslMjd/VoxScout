@@ -9,6 +9,7 @@ import Login from './components/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext';
 import SignUpPage from './pages/SignUpPage'
+import AboutUsPage from './pages/AboutUsPage'
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<SignUpPage />} />
+          <Route path="/about" element={<AboutUsPage />} />
         </Routes>
       </div>
     </AuthProvider>
